@@ -17,6 +17,7 @@ class FancyBottomNavigation extends StatefulWidget {
       {@required this.tabs,
       @required this.onTabChangedListener,
       this.key,
+        this.controller,
       this.initialSelection = 0,
       this.circleColor,
       this.activeIconColor,
@@ -35,6 +36,7 @@ class FancyBottomNavigation extends StatefulWidget {
   final Color barBackgroundColor;
   final List<TabData> tabs;
   final int initialSelection;
+  final FancyBottomNavigationController controller;
 
   final Key key;
 
@@ -56,6 +58,8 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
   Color inactiveIconColor;
   Color barBackgroundColor;
   Color textColor;
+
+  FancyBottomNavigationController _controller;
 
   @override
   void didChangeDependencies() {
@@ -96,6 +100,14 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
   void initState() {
     super.initState();
     _setSelected(widget.tabs[widget.initialSelection].key);
+
+    if (widget.controller != null) {
+      _controller = widget.controller;
+    } else {
+      _controller = FancyBottomNavigationController(widget.initialSelection);
+    }
+
+    _controller.addListener(_onChangePage);
   }
 
   _setSelected(UniqueKey key) {
@@ -108,6 +120,12 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
         nextIcon = widget.tabs[selected].iconData;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.removeListener(_onChangePage);
   }
 
   @override
@@ -165,29 +183,31 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                           width:
                               CIRCLE_SIZE + CIRCLE_OUTLINE + SHADOW_ALLOWANCE,
                           child: ClipRect(
-                              clipper: HalfClipper(),
-                              child: Container(
-                                child: Center(
-                                  child: Container(
-                                      width: CIRCLE_SIZE + CIRCLE_OUTLINE,
-                                      height: CIRCLE_SIZE + CIRCLE_OUTLINE,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.black12,
-                                                blurRadius: 8)
-                                          ])),
-                                ),
-                              )),
+                            clipper: HalfClipper(),
+                            child: Container(
+                              child: Center(
+                                child: Container(
+                                    width: CIRCLE_SIZE + CIRCLE_OUTLINE,
+                                    height: CIRCLE_SIZE + CIRCLE_OUTLINE,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 8)
+                                        ])),
+                              ),
+                            ),
+                          ),
                         ),
                         SizedBox(
-                            height: ARC_HEIGHT,
-                            width: ARC_WIDTH,
-                            child: CustomPaint(
-                              painter: HalfPainter(barBackgroundColor),
-                            )),
+                          height: ARC_HEIGHT,
+                          width: ARC_WIDTH,
+                          child: CustomPaint(
+                            painter: HalfPainter(barBackgroundColor),
+                          ),
+                        ),
                         SizedBox(
                           height: CIRCLE_SIZE,
                           width: CIRCLE_SIZE,
@@ -236,6 +256,10 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     });
   }
 
+  void _onChangePage() {
+    setPage(_controller.value);
+  }
+
   void setPage(int page) {
     widget.onTabChangedListener(page);
     _setSelected(widget.tabs[page].key);
@@ -254,4 +278,8 @@ class TabData {
   String title;
   Function onclick;
   final UniqueKey key = UniqueKey();
+}
+
+class FancyBottomNavigationController extends ValueNotifier<int> {
+  FancyBottomNavigationController(int value) : super(value);
 }
