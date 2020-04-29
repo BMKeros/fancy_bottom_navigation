@@ -144,20 +144,25 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: widget.tabs
-                .map((t) => TabItem(
+                .map(
+                  (t) =>
+                  TabItem(
                     uniqueKey: t.key,
                     selected: t.key == widget.tabs[currentSelected].key,
                     iconData: t.iconData,
                     title: t.title,
                     iconColor: inactiveIconColor,
                     textColor: textColor,
+                    showBadge: t.showBadge,
                     callbackFunction: (uniqueKey) {
                       int selected = widget.tabs
                           .indexWhere((tabData) => tabData.key == uniqueKey);
                       widget.onTabChangedListener(selected);
                       _setSelected(uniqueKey);
                       _initAnimationAndStart(_circleAlignX, 1);
-                    }))
+                    },
+                  ),
+            )
                 .toList(),
           ),
         ),
@@ -187,16 +192,19 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                             child: Container(
                               child: Center(
                                 child: Container(
-                                    width: CIRCLE_SIZE + CIRCLE_OUTLINE,
-                                    height: CIRCLE_SIZE + CIRCLE_OUTLINE,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 8)
-                                        ])),
+                                  width: CIRCLE_SIZE + CIRCLE_OUTLINE,
+                                  height: CIRCLE_SIZE + CIRCLE_OUTLINE,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -272,11 +280,17 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
 }
 
 class TabData {
-  TabData({@required this.iconData, @required this.title, this.onclick});
+  TabData({
+    @required this.iconData,
+    @required this.title,
+    this.onclick,
+    this.showBadge = false,
+  });
 
   IconData iconData;
   String title;
   Function onclick;
+  bool showBadge;
   final UniqueKey key = UniqueKey();
 }
 
