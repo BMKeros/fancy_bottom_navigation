@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 
 const double ICON_OFF = -3;
@@ -11,14 +11,14 @@ const int ANIM_DURATION = 300;
 
 class TabItem extends StatelessWidget {
   TabItem({
-    @required this.uniqueKey,
-    @required this.selected,
-    @required this.iconData,
-    @required this.title,
-    @required this.callbackFunction,
-    @required this.textColor,
-    @required this.iconColor,
-    @required this.showBadge,
+    required this.uniqueKey,
+    required this.selected,
+    required this.iconData,
+    required this.title,
+    required this.callbackFunction,
+    required this.textColor,
+    required this.iconColor,
+    required this.showBadge,
   });
 
   final UniqueKey uniqueKey;
@@ -68,8 +68,7 @@ class TabItem extends StatelessWidget {
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: ANIM_DURATION),
                 opacity: (selected) ? ALPHA_OFF : ALPHA_ON,
-                child: Badge(
-                  padding: EdgeInsets.all(7),
+                child: badges.Badge(
                   badgeContent: Text(
                     '!',
                     style: TextStyle(color: Colors.white),

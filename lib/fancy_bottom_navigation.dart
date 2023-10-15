@@ -13,32 +13,32 @@ const double SHADOW_ALLOWANCE = 20;
 const double BAR_HEIGHT = 60;
 
 class FancyBottomNavigation extends StatefulWidget {
-  FancyBottomNavigation(
-      {@required this.tabs,
-      @required this.onTabChangedListener,
-      this.key,
-        this.controller,
-      this.initialSelection = 0,
-      this.circleColor,
-      this.activeIconColor,
-      this.inactiveIconColor,
-      this.textColor,
-      this.barBackgroundColor})
-      : assert(onTabChangedListener != null),
+  FancyBottomNavigation({
+    required this.tabs,
+    required this.onTabChangedListener,
+    this.key,
+    this.controller,
+    this.initialSelection = 0,
+    this.circleColor,
+    this.activeIconColor,
+    this.inactiveIconColor,
+    this.textColor,
+    this.barBackgroundColor,
+  })  : assert(onTabChangedListener != null),
         assert(tabs != null),
         assert(tabs.length > 1 && tabs.length <= 5);
 
   final Function(int position) onTabChangedListener;
-  final Color circleColor;
-  final Color activeIconColor;
-  final Color inactiveIconColor;
-  final Color textColor;
-  final Color barBackgroundColor;
   final List<TabData> tabs;
   final int initialSelection;
-  final FancyBottomNavigationController controller;
+  final Color? circleColor;
+  final Color? activeIconColor;
+  final Color? inactiveIconColor;
+  final Color? textColor;
+  final Color? barBackgroundColor;
+  final FancyBottomNavigationController? controller;
 
-  final Key key;
+  final Key? key;
 
   @override
   FancyBottomNavigationState createState() => FancyBottomNavigationState();
@@ -53,13 +53,13 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
   double _circleAlignX = 0;
   double _circleIconAlpha = 1;
 
-  Color circleColor;
-  Color activeIconColor;
-  Color inactiveIconColor;
-  Color barBackgroundColor;
-  Color textColor;
+  Color? circleColor;
+  Color? activeIconColor;
+  Color? inactiveIconColor;
+  Color? barBackgroundColor;
+  Color? textColor;
 
-  FancyBottomNavigationController _controller;
+  late FancyBottomNavigationController _controller;
 
   @override
   void didChangeDependencies() {
@@ -102,7 +102,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     _setSelected(widget.tabs[widget.initialSelection].key);
 
     if (widget.controller != null) {
-      _controller = widget.controller;
+      _controller = widget.controller!;
     } else {
       _controller = FancyBottomNavigationController(widget.initialSelection);
     }
@@ -131,7 +131,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
   @override
   Widget build(BuildContext context) {
     return Stack(
-      overflow: Overflow.visible,
+      clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: <Widget>[
         Container(
@@ -145,14 +145,13 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: widget.tabs
                 .map(
-                  (t) =>
-                  TabItem(
+                  (t) => TabItem(
                     uniqueKey: t.key,
                     selected: t.key == widget.tabs[currentSelected].key,
                     iconData: t.iconData,
                     title: t.title,
-                    iconColor: inactiveIconColor,
-                    textColor: textColor,
+                    iconColor: inactiveIconColor ?? Colors.transparent,
+                    textColor: textColor ?? Colors.transparent,
                     showBadge: t.showBadge,
                     callbackFunction: (uniqueKey) {
                       int selected = widget.tabs
@@ -162,7 +161,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                       _initAnimationAndStart(_circleAlignX, 1);
                     },
                   ),
-            )
+                )
                 .toList(),
           ),
         ),
@@ -213,7 +212,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                           height: ARC_HEIGHT,
                           width: ARC_WIDTH,
                           child: CustomPaint(
-                            painter: HalfPainter(barBackgroundColor),
+                            painter: HalfPainter(barBackgroundColor ?? Colors.white),
                           ),
                         ),
                         SizedBox(
@@ -281,15 +280,15 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
 
 class TabData {
   TabData({
-    @required this.iconData,
-    @required this.title,
+    required this.iconData,
+    required this.title,
     this.onclick,
     this.showBadge = false,
   });
 
   IconData iconData;
   String title;
-  Function onclick;
+  Function()? onclick;
   bool showBadge;
   final UniqueKey key = UniqueKey();
 }
