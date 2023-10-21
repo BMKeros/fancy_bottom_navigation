@@ -271,10 +271,6 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     widget.onTabChangedListener(page);
     _setSelected(widget.tabs[page].key);
     _initAnimationAndStart(_circleAlignX, 1);
-
-    setState(() {
-      currentSelected = page;
-    });
   }
 }
 
