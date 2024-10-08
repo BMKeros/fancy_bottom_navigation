@@ -156,9 +156,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                     callbackFunction: (uniqueKey) {
                       int selected = widget.tabs
                           .indexWhere((tabData) => tabData.key == uniqueKey);
-                      widget.onTabChangedListener(selected);
-                      _setSelected(uniqueKey);
-                      _initAnimationAndStart(_circleAlignX, 1);
+                      _controller.value = widget.tabs[selected].index;
                     },
                   ),
                 )
@@ -278,6 +276,7 @@ class TabData {
   TabData({
     required this.iconData,
     required this.title,
+    required this.index,
     this.onclick,
     this.showBadge = false,
   });
@@ -286,6 +285,7 @@ class TabData {
   String title;
   Function()? onclick;
   bool showBadge;
+  int index;
   final UniqueKey key = UniqueKey();
 }
 
